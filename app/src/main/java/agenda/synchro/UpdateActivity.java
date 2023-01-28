@@ -17,35 +17,27 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class addRdvActivity extends AppCompatActivity {
+public class UpdateActivity extends AppCompatActivity {
     private TextInputEditText nameTextInput;
     private TextInputEditText dateTextInput;
     private TextInputEditText timeTextInput;
     private TextInputEditText locationTextInput;
+    private int idRDV;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.exchange_json);
+        setContentView(R.layout.update_rdv);
+
+        idRDV = getIntent().getIntExtra("idRDV", -1);
 
         // Récupération des références aux vues
         nameTextInput = findViewById(R.id.addRDV_name);
         dateTextInput = findViewById(R.id.addRDV_date);
         timeTextInput = findViewById(R.id.addRDV_time);
         locationTextInput = findViewById(R.id.addRDV_location);
-
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-
-        dateTextInput.setText(dateFormat.format(c.getTime()));
-        timeTextInput.setText(timeFormat.format(c.getTime()));
 
         Button send = findViewById(R.id.send_button);
         send.setOnClickListener(new View.OnClickListener() {
@@ -61,15 +53,15 @@ public class addRdvActivity extends AppCompatActivity {
                                 Objects.requireNonNull(locationTextInput.getText()).toString()
                         );
                         String json = new Genson().serialize(rdv);
-                        Log.i("Exchange-JSON", "Send == " + json);
+                        Log.i("Exchange-JSON", "Update == " + json);
 
                         HttpURLConnection urlConnection = null;
 
                         try {
-                            URL url = new URL("http://192.168.1.10:8080/ASI_war/rest/rdv/add");
+                            URL url = new URL("http://192.168.1.10:8080/ASI_war/rest/rdv/update");
 
                             urlConnection = (HttpURLConnection) url.openConnection();
-                            urlConnection.setRequestMethod("POST");
+                            urlConnection.setRequestMethod("PUT");
                             urlConnection.setDoOutput(true);
                             urlConnection.setRequestProperty("Content-Type", "application/json");
                             urlConnection.setRequestProperty("Accept", "application/json");
@@ -93,9 +85,44 @@ public class addRdvActivity extends AppCompatActivity {
                     }
                 }).start();
 
-                Intent intent = new Intent(addRdvActivity.this, MainActivity.class);
+                Intent intent = new Intent(UpdateActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
+    }
+
+    protected void onResume() {
+        super.onResume();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection urlConnection = null;
+                try {
+                    URL url = new URL("http://192.168.1.10:8080/ASI_war/rest/rdv/getid/" + idRDV);
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+
+                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                    Scanner scanner = new Scanner(in);
+                    final RDV rdv = new Genson().deserialize(scanner.nextLine(), RDV.class);
+                    Log.i("Exchange-JSON", "Result == " + rdv);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            nameTextInput.setText(rdv.getName());
+                            dateTextInput.setText(rdv.getDate());
+                            timeTextInput.setText(rdv.getTime());
+                            locationTextInput.setText(rdv.getLocation());
+                        }
+                    });
+                    in.close();
+                } catch (IOException e) {
+                    Log.e("Exchange-JSON", "Cannot found HTTP server", e);
+                } finally {
+                    if( urlConnection != null) urlConnection.disconnect();
+                }
+            }
+        }).start();
     }
 }

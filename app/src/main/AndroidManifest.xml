@@ -31,10 +31,13 @@
                 android:value="" />
         </activity>
 
-        <activity android:name=".addRdvActivity">
+        <activity android:name=".AddActivity">
         </activity>
 
-        <activity android:name=".AppointmentDetailsActivity">
+        <activity android:name=".DetailsActivity">
+        </activity>
+
+        <activity android:name=".UpdateActivity">
         </activity>
 
     </application>

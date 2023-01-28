@@ -18,7 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
 
-public class AppointmentDetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity {
     private TextView nameTextView;
     private TextView dateTextView;
     private TextView timeTextView;
@@ -45,11 +45,53 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
         timeTextView.setText("2:00:00");
         locationTextView.setText("UPJV");
 */
+        Button update = findViewById(R.id.update_button);
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DetailsActivity.this, UpdateActivity.class);
+                intent.putExtra("idRDV", idRDV);
+                startActivity(intent);
+            }
+        });
+
+        Button delete = findViewById(R.id.delete_button);
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        HttpURLConnection urlConnection = null;
+                        try {
+                            URL url = new URL("http://192.168.1.10:8080/ASI_war/rest/rdv/delete/" + idRDV);
+                            urlConnection = (HttpURLConnection) url.openConnection();
+                            urlConnection.setRequestMethod("GET");
+                            Log.i("HTTP", "URL == " + url);
+
+                            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                            Scanner scanner = new Scanner(in);
+                            Log.i("Exchange JSON", "Result == " + scanner.nextLine());
+                            in.close();
+                        } catch (IOException e) {
+                            Log.i("Exchange-JSON", "Cannot found http server : ", e);
+                        } finally {
+                            if (urlConnection != null) urlConnection.disconnect();
+                        }
+                        Log.i("Exchange-JSON", "Delete == " + idRDV);
+                    }
+                }).start();
+
+                Intent intent = new Intent(DetailsActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
         Button close = findViewById(R.id.close_button);
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AppointmentDetailsActivity.this, MainActivity.class);
+                Intent intent = new Intent(DetailsActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
@@ -57,7 +99,6 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
         if (idRDV == -1) {
             Log.e("Exchange-JSON", "idRDV not provided");
         }
-
     }
 
     protected void onResume() {
@@ -70,6 +111,7 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
                     URL url = new URL("http://192.168.1.10:8080/ASI_war/rest/rdv/getid/" + idRDV);
                     urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.setRequestMethod("GET");
+                    Log.i("HTTP", "URL == " + url);
 
                     InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                     Scanner scanner = new Scanner(in);
@@ -89,10 +131,9 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     Log.e("Exchange-JSON", "Cannot found HTTP server", e);
                 } finally {
-                    if( urlConnection != null) urlConnection.disconnect();
+                    if (urlConnection != null) urlConnection.disconnect();
                 }
             }
         }).start();
     }
-
 }

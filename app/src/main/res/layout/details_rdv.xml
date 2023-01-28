@@ -41,12 +41,33 @@
         android:textStyle="italic" />
 
     <Button
+        android:id="@+id/update_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="101dp"
+        android:text="UPDATE" />
+
+    <Button
+        android:id="@+id/delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="101dp"
+        android:layout_toRightOf="@id/update_button"
+        android:text="DELETE" />
+
+    <Button
         android:id="@+id/close_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="Close" />
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="101dp"
+        android:layout_toRightOf="@id/delete_button"
+        android:text="CLOSE" />
+
 
 </RelativeLayout>
 

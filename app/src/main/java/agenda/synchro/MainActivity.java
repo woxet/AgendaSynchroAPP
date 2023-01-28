@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, addRdvActivity.class);
+                Intent intent = new Intent(MainActivity.this, AddActivity.class);
                 startActivity(intent);
             }
         });
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                         HttpURLConnection urlConnection = null;
                         try {
                             URL url = new URL("http://192.168.1.10:8080/ASI_war/rest/rdv/getdate/" + date);
-                            Log.i("Exchange-JSON", "URL == " + url);
+                            Log.i("URL", "URL == " + url);
 
                             urlConnection = (HttpURLConnection) url.openConnection();
                             urlConnection.setRequestMethod("GET");
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                                                         break;
                                                     }
                                                 }
-                                                Intent intent = new Intent(MainActivity.this, AppointmentDetailsActivity.class);
+                                                Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
                                                 intent.putExtra("idRDV", idRDV);
                                                 startActivity(intent);
                                             }
