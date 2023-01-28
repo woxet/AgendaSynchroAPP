@@ -27,6 +27,7 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
     private TextView timeTextView;
     private TextView locationTextView;
     private Button close;
+    private int idRDV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +35,7 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.details_rdv);
 
         // Récupération des données de l'Intent
-        String name = getIntent().getStringExtra("name");
+        idRDV = getIntent().getIntExtra("idRDV", -1);
 
         // Récupération des références aux vues
         nameTextView = findViewById(R.id.name_text_view);
@@ -56,6 +57,12 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        if (idRDV == -1) {
+            Log.e("Exchange-JSON", "idRDV not provided");
+            return;
+        }
+
     }
 
     protected void onResume() {
@@ -65,7 +72,7 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
             public void run() {
                 HttpURLConnection urlConnection = null;
                 try {
-                    URL url = new URL("http://192.168.1.10:8080/ASI_war/rest/rdv/get/0");
+                    URL url = new URL("http://192.168.1.10:8080/ASI_war/rest/rdv/getid/" + idRDV);
                     urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.setRequestMethod("GET");
 

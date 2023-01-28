@@ -24,6 +24,11 @@ public class RDV {
         this.setLocation(location);
     }
 
+    public RDV(int idRDV, String name){
+        this.idRDV = idRDV;
+        this.name = name;
+    }
+
     public int getIdRDV() {
         return idRDV;
     }
