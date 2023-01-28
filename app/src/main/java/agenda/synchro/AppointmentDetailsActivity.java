@@ -9,15 +9,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.textfield.TextInputEditText;
 import com.owlike.genson.Genson;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -26,7 +23,6 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
     private TextView dateTextView;
     private TextView timeTextView;
     private TextView locationTextView;
-    private Button close;
     private int idRDV;
 
     @Override
@@ -60,7 +56,6 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
 
         if (idRDV == -1) {
             Log.e("Exchange-JSON", "idRDV not provided");
-            return;
         }
 
     }
@@ -90,7 +85,6 @@ public class AppointmentDetailsActivity extends AppCompatActivity {
                             locationTextView.setText(rdv.getLocation());
                         }
                     });
-
                     in.close();
                 } catch (IOException e) {
                     Log.e("Exchange-JSON", "Cannot found HTTP server", e);

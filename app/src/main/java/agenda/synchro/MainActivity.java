@@ -1,12 +1,6 @@
 package agenda.synchro;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
-import android.Manifest;
-import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,12 +8,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.owlike.genson.GenericType;
-import com.owlike.genson.Genson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,14 +21,11 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -47,21 +36,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        /*String[] items = new String[]{"John", "Jane", "Michael", "Emily", "David", "Jessica", "Daniel", "Sophia", "William", "Isabella"};
-        ListView listView = findViewById(R.id.list_view);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String name = (String) parent.getItemAtPosition(position);
-                Intent intent = new Intent(MainActivity.this, AppointmentDetailsActivity.class);
-                intent.putExtra("name", name);
-                startActivity(intent);
-            }
-        });*/
 
         FloatingActionButton fab = findViewById(R.id.fabAddRdv);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -76,17 +50,18 @@ public class MainActivity extends AppCompatActivity {
         ListView listView;
 
         // Initialisation des éléments graphiques
-        calendarView = (CalendarView) findViewById(R.id.calendarView);
-        listView = (ListView) findViewById(R.id.list_view);
+        calendarView = findViewById(R.id.calendarView);
+        listView = findViewById(R.id.list_view);
 
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
-            public void onSelectedDayChange(CalendarView view, int year, int month, int day) {
+            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         // Récupération de la date sélectionnée
-                        String date = year + "-" + (month + 1) + "-" + day;
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        String date = dateFormat.format(new Date(year - 1900, month, dayOfMonth));
 
                         HttpURLConnection urlConnection = null;
                         try {

@@ -24,14 +24,19 @@ public class RDV {
         this.setLocation(location);
     }
 
+    public RDV(String name, String date, String time, String location){
+        this.setName(name);
+        this.setDate(date);
+        this.setTime(time);
+        this.setLocation(location);
+    }
+
     public RDV(int idRDV, String name){
         this.idRDV = idRDV;
         this.name = name;
     }
 
-    public int getIdRDV() {
-        return idRDV;
-    }
+    public int getIdRDV() {return idRDV;}
 
     public void setIdRDV(int idRDV) {
         this.idRDV = idRDV;
@@ -69,6 +74,7 @@ public class RDV {
         this.location = location;
     }
 
+    @NonNull
     @Override
     public String toString() {
         JSONObject jsonObject = new JSONObject();
