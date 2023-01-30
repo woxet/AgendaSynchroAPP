@@ -58,7 +58,7 @@ public class UpdateActivity extends AppCompatActivity {
                         HttpURLConnection urlConnection = null;
 
                         try {
-                            URL url = new URL("http://192.168.1.10:8080/ASI_war/rest/rdv/update");
+                            URL url = new URL(Ressources.ip + Ressources.path + "update");
 
                             urlConnection = (HttpURLConnection) url.openConnection();
                             urlConnection.setRequestMethod("PUT");
@@ -98,7 +98,7 @@ public class UpdateActivity extends AppCompatActivity {
             public void run() {
                 HttpURLConnection urlConnection = null;
                 try {
-                    URL url = new URL("http://192.168.1.10:8080/ASI_war/rest/rdv/getid/" + idRDV);
+                    URL url = new URL(Ressources.ip + Ressources.path + "getid/" + idRDV);
                     urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.setRequestMethod("GET");
 

@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
                         HttpURLConnection urlConnection = null;
                         try {
-                            URL url = new URL("http://192.168.1.10:8080/ASI_war/rest/rdv/getdate/" + date);
+                            URL url = new URL(Ressources.ip + Ressources.path +"getdate/" + date);
                             Log.i("URL", "URL == " + url);
 
                             urlConnection = (HttpURLConnection) url.openConnection();
