@@ -82,8 +82,7 @@ public class DetailsActivity extends AppCompatActivity {
                     }
                 }).start();
 
-                Intent intent = new Intent(DetailsActivity.this, MainActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
 
@@ -91,8 +90,7 @@ public class DetailsActivity extends AppCompatActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(DetailsActivity.this, MainActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
 
@@ -135,5 +133,14 @@ public class DetailsActivity extends AppCompatActivity {
                 }
             }
         }).start();
+    }
+
+    @Override
+    public void finish() {
+        // Déclencher l'action ou l'événement qui actualisera la vue dans l'activité principale
+        Intent intent = new Intent().setAction("com.example.ACTION_REFRESH_VIEW");
+        sendBroadcast(intent);
+
+        super.finish();
     }
 }

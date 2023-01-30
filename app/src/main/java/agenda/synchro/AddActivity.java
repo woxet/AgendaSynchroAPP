@@ -93,9 +93,17 @@ public class AddActivity extends AppCompatActivity {
                     }
                 }).start();
 
-                Intent intent = new Intent(AddActivity.this, MainActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
+    }
+
+    @Override
+    public void finish() {
+        // Déclencher l'action ou l'événement qui actualisera la vue dans l'activité principale
+        Intent intent = new Intent().setAction("com.example.ACTION_REFRESH_VIEW");
+        sendBroadcast(intent);
+
+        super.finish();
     }
 }

@@ -32,7 +32,7 @@ public class UpdateActivity extends AppCompatActivity {
         setContentView(R.layout.update_rdv);
 
         idRDV = getIntent().getIntExtra("idRDV", -1);
-
+        Log.i("IDRDV","==" +idRDV);
         // Récupération des références aux vues
         nameTextInput = findViewById(R.id.addRDV_name);
         dateTextInput = findViewById(R.id.addRDV_date);
@@ -47,6 +47,7 @@ public class UpdateActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     public void run() {
                         RDV rdv = new RDV(
+                                Objects.requireNonNull(idRDV),
                                 Objects.requireNonNull(nameTextInput.getText()).toString(),
                                 Objects.requireNonNull(dateTextInput.getText()).toString(),
                                 Objects.requireNonNull(timeTextInput.getText()).toString(),
@@ -85,8 +86,7 @@ public class UpdateActivity extends AppCompatActivity {
                     }
                 }).start();
 
-                Intent intent = new Intent(UpdateActivity.this, MainActivity.class);
-                startActivity(intent);
+                finish();
             }
         });
     }
@@ -124,5 +124,14 @@ public class UpdateActivity extends AppCompatActivity {
                 }
             }
         }).start();
+    }
+
+    @Override
+    public void finish() {
+        // Déclencher l'action ou l'événement qui actualisera la vue dans l'activité principale
+        Intent intent = new Intent().setAction("com.example.ACTION_REFRESH_VIEW");
+        sendBroadcast(intent);
+
+        super.finish();
     }
 }
