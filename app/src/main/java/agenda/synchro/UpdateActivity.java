@@ -10,6 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.owlike.genson.Genson;
+import com.owlike.genson.GensonBuilder;
+import ressources.DateSerializer;
+import ressources.Ressources;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -17,6 +20,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -46,20 +51,26 @@ public class UpdateActivity extends AppCompatActivity {
 
                 new Thread(new Runnable() {
                     public void run() {
-                        RDV rdv = new RDV(
-                                Objects.requireNonNull(idRDV),
-                                Objects.requireNonNull(nameTextInput.getText()).toString(),
-                                Objects.requireNonNull(dateTextInput.getText()).toString(),
-                                Objects.requireNonNull(timeTextInput.getText()).toString(),
-                                Objects.requireNonNull(locationTextInput.getText()).toString()
-                        );
+                        RDV rdv = null;
+
+                        try {
+                            rdv = new RDV(
+                                    Objects.requireNonNull(idRDV),
+                                    Objects.requireNonNull(nameTextInput.getText()).toString(),
+                                    new SimpleDateFormat("yyyy-MM-dd").parse(Objects.requireNonNull(dateTextInput.getText()).toString()),
+                                    Objects.requireNonNull(timeTextInput.getText()).toString(),
+                                    Objects.requireNonNull(locationTextInput.getText()).toString()
+                            );
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
                         String json = new Genson().serialize(rdv);
                         Log.i("Exchange-JSON", "Update == " + json);
 
                         HttpURLConnection urlConnection = null;
 
                         try {
-                            URL url = new URL(Ressources.ip + Ressources.path + "update");
+                            URL url = new URL(Ressources.getIP() + Ressources.getPath() + "update");
 
                             urlConnection = (HttpURLConnection) url.openConnection();
                             urlConnection.setRequestMethod("PUT");
@@ -98,20 +109,22 @@ public class UpdateActivity extends AppCompatActivity {
             public void run() {
                 HttpURLConnection urlConnection = null;
                 try {
-                    URL url = new URL(Ressources.ip + Ressources.path + "getid/" + idRDV);
+                    URL url = new URL(Ressources.getIP() + Ressources.getPath() + "getid/" + idRDV);
                     urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.setRequestMethod("GET");
 
                     InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                     Scanner scanner = new Scanner(in);
-                    final RDV rdv = new Genson().deserialize(scanner.nextLine(), RDV.class);
+
+                    Genson genson = new GensonBuilder().withConverter(new DateSerializer(), java.util.Date.class).create();
+                    final RDV rdv = genson.deserialize(scanner.nextLine(), RDV.class);
                     Log.i("Exchange-JSON", "Result == " + rdv);
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             nameTextInput.setText(rdv.getName());
-                            dateTextInput.setText(rdv.getDate());
+                            dateTextInput.setText(rdv.getDate().toString());
                             timeTextInput.setText(rdv.getTime());
                             locationTextInput.setText(rdv.getLocation());
                         }

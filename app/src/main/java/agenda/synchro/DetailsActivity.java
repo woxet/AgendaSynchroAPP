@@ -6,10 +6,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.owlike.genson.Genson;
+import com.owlike.genson.GensonBuilder;
+import ressources.DateSerializer;
+import ressources.Ressources;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -106,21 +107,24 @@ public class DetailsActivity extends AppCompatActivity {
             public void run() {
                 HttpURLConnection urlConnection = null;
                 try {
-                    URL url = new URL(Ressources.ip + Ressources.path + "getid/" + idRDV);
+                    URL url = new URL(Ressources.getIP() + Ressources.getPath() + "getid/" + idRDV);
                     urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.setRequestMethod("GET");
                     Log.i("HTTP", "URL == " + url);
 
                     InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                     Scanner scanner = new Scanner(in);
-                    final RDV rdv = new Genson().deserialize(scanner.nextLine(), RDV.class);
+                    Log.i("TEST","AVANT PARSE");
+
+                    Genson genson = new GensonBuilder().withConverter(new DateSerializer(), java.util.Date.class).create();
+                    final RDV rdv = genson.deserialize(scanner.nextLine(), RDV.class);
                     Log.i("Exchange-JSON", "Result == " + rdv);
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             nameTextView.setText(rdv.getName());
-                            dateTextView.setText(rdv.getDate());
+                            dateTextView.setText(rdv.getDate().toString());
                             timeTextView.setText(rdv.getTime());
                             locationTextView.setText(rdv.getLocation());
                         }

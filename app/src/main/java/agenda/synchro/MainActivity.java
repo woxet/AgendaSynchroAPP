@@ -19,6 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import ressources.Ressources;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -82,12 +83,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // Récupération de la date sélectionnée
-                Calendar c = Calendar.getInstance();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                String date = dateFormat.format(c.getTime());
+                //Calendar c = Calendar.getInstance();
+                //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                //String date = dateFormat.format(c.getTime());
                 HttpURLConnection urlConnection = null;
                 try {
-                    URL url = new URL(Ressources.ip + Ressources.path +"getdate/" + date);
+                    URL url = new URL(Ressources.getIP() + Ressources.getPath() +"getdate/" + date);
                     Log.i("URL", "URL == " + url);
 
                     urlConnection = (HttpURLConnection) url.openConnection();

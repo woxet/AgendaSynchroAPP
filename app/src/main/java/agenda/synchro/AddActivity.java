@@ -5,11 +5,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.textfield.TextInputEditText;
 import com.owlike.genson.Genson;
+import com.owlike.genson.GensonBuilder;
+import ressources.DateSerializer;
+import ressources.Ressources;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -54,19 +56,37 @@ public class AddActivity extends AppCompatActivity {
 
                 new Thread(new Runnable() {
                     public void run() {
-                        RDV rdv = new RDV(
-                                Objects.requireNonNull(nameTextInput.getText()).toString(),
-                                Objects.requireNonNull(dateTextInput.getText()).toString(),
-                                Objects.requireNonNull(timeTextInput.getText()).toString(),
-                                Objects.requireNonNull(locationTextInput.getText()).toString()
-                        );
-                        String json = new Genson().serialize(rdv);
+                        // Expression régulière pour le format de date yyyy-MM-dd
+                        String pattern = "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$";
+                        String dateString = dateTextInput.getText().toString();
+                        // Vérifier si la saisie respecte le format
+                        if (!dateString.matches(pattern)) {
+                            // Afficher un message d'erreur si le format n'est pas respecté
+                            //Toast.makeText(this, "La date doit être au format yyyy-MM-dd", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Traiter la date correctement formatée ici
+                        }
+
+                        RDV rdv = null;
+                        try {
+                            rdv = new RDV(
+                                    Objects.requireNonNull(nameTextInput.getText()).toString(),
+                                    new SimpleDateFormat("yyyy-MM-dd").parse(Objects.requireNonNull(dateTextInput.getText()).toString()),
+                                    Objects.requireNonNull(timeTextInput.getText()).toString(),
+                                    Objects.requireNonNull(locationTextInput.getText()).toString()
+                            );
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        Genson genson = new GensonBuilder().withConverter(new DateSerializer(), java.util.Date.class).create();
+                        String json = genson.serialize(rdv);
                         Log.i("Exchange-JSON", "Send == " + json);
 
                         HttpURLConnection urlConnection = null;
 
                         try {
-                            URL url = new URL(Ressources.ip + Ressources.path +"add/");
+                            URL url = new URL(Ressources.getIP() + Ressources.getPath() + "add/");
 
                             urlConnection = (HttpURLConnection) url.openConnection();
                             urlConnection.setRequestMethod("POST");
