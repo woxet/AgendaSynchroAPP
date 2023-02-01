@@ -1,5 +1,8 @@
-package agenda.synchro;
+package agenda.synchro.service;
 
+import agenda.synchro.R;
+import agenda.synchro.ressources.RDV;
+import agenda.synchro.ressources.Ressources;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,9 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.owlike.genson.Genson;
-import com.owlike.genson.GensonBuilder;
-import ressources.DateSerializer;
-import ressources.Ressources;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

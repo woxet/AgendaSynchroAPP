@@ -1,18 +1,20 @@
-package agenda.synchro;
+package agenda.synchro.service;
 
+import agenda.synchro.R;
+import agenda.synchro.ressources.RDV;
+import agenda.synchro.ressources.Ressources;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
+import android.widget.DatePicker;
+import android.widget.TimePicker;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.textfield.TextInputEditText;
 import com.owlike.genson.Genson;
-import com.owlike.genson.GensonBuilder;
-import ressources.DateSerializer;
-import ressources.Ressources;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -20,8 +22,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -112,15 +114,55 @@ public class UpdateActivity extends AppCompatActivity {
                     InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                     Scanner scanner = new Scanner(in);
 
-                    Genson genson = new GensonBuilder().withConverter(new DateSerializer(), java.util.Date.class).create();
-                    final RDV rdv = genson.deserialize(scanner.nextLine(), RDV.class);
+                    //Genson genson = new GensonBuilder().withConverter(new DateSerializer(), java.util.Date.class).create();
+                    final RDV rdv = new Genson().deserialize(scanner.nextLine(), RDV.class);
                     Log.i("Exchange-JSON", "Result == " + rdv);
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             nameTextInput.setText(rdv.getName());
-                            dateTextInput.setText(rdv.getDate().toString());
+                            dateTextInput.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Calendar cal = Calendar.getInstance();
+                                    int year = cal.get(Calendar.YEAR);
+                                    int month = cal.get(Calendar.MONTH);
+                                    int day = cal.get(Calendar.DAY_OF_MONTH);
+
+                                    DatePickerDialog dialog = new DatePickerDialog(
+                                            UpdateActivity.this,
+                                            new DatePickerDialog.OnDateSetListener() {
+                                                @Override
+                                                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                                    String date = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth);
+                                                    dateTextInput.setText(date);
+                                                }
+                                            },
+                                            year,
+                                            month,
+                                            day
+                                    );
+                                    dialog.show();
+                                }
+                            });
+                            dateTextInput.setText(rdv.getDate());
+                            timeTextInput.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Calendar calendar = Calendar.getInstance();
+                                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                                    int minute = calendar.get(Calendar.MINUTE);
+                                    TimePickerDialog timePickerDialog = new TimePickerDialog(UpdateActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                                        @Override
+                                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                                            String time = String.format("%02d:%02d", selectedHour, selectedMinute);
+                                            timeTextInput.setText(time);
+                                        }
+                                    }, hour, minute, true);
+                                    timePickerDialog.show();
+                                }
+                            });
                             timeTextInput.setText(rdv.getTime());
                             locationTextInput.setText(rdv.getLocation());
                         }

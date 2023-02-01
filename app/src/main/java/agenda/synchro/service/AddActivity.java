@@ -1,5 +1,8 @@
-package agenda.synchro;
+package agenda.synchro.service;
 
+import agenda.synchro.R;
+import agenda.synchro.ressources.RDV;
+import agenda.synchro.ressources.Ressources;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -12,9 +15,6 @@ import android.widget.TimePicker;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.owlike.genson.Genson;
-import com.owlike.genson.GensonBuilder;
-import ressources.DateSerializer;
-import ressources.Ressources;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -24,10 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class AddActivity extends AppCompatActivity {
     private TextInputEditText nameTextInput;
@@ -47,11 +44,9 @@ public class AddActivity extends AppCompatActivity {
         locationTextInput = findViewById(R.id.addRDV_location);
 
         Calendar c = Calendar.getInstance();
-       // SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
         String selectedDate = getIntent().getStringExtra("selected_date");
-        //TextInputEditText dateInput = findViewById(R.id.addRDV_name);
         dateTextInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,10 +71,7 @@ public class AddActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
-
         dateTextInput.setText(selectedDate);
-
-        //TextInputEditText timeInput = findViewById(R.id.addRDV_time);
         timeTextInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,27 +97,25 @@ public class AddActivity extends AppCompatActivity {
 
                 new Thread(new Runnable() {
                     public void run() {
-                        // Expression régulière pour le format de date yyyy-MM-dd
-                        String pattern = "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$";
                         String dateString = dateTextInput.getText().toString();
-                        // Vérifier si la saisie respecte le format
-                        if (!dateString.matches(pattern)) {
-                            // Afficher un message d'erreur si le format n'est pas respecté
-                            //Toast.makeText(this, "La date doit être au format yyyy-MM-dd", Toast.LENGTH_SHORT).show();
-                        } else {
-                            // Traiter la date correctement formatée ici
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        Date date = new Date();
+                        try {
+                            date = format.parse(dateString);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
                         }
-
+                        Log.i("CHECK",dateString);
                         RDV rdv = null;
                         rdv = new RDV(
                                 Objects.requireNonNull(nameTextInput.getText()).toString(),
-                                new SimpleDateFormat("yyyy-MM-dd").format(Objects.requireNonNull(dateTextInput.getText()).toString()),
+                                Objects.requireNonNull(date),
                                 Objects.requireNonNull(timeTextInput.getText()).toString(),
                                 Objects.requireNonNull(locationTextInput.getText()).toString()
                         );
 
-                        Genson genson = new GensonBuilder().withConverter(new DateSerializer(), java.util.Date.class).create();
-                        String json = genson.serialize(rdv);
+                        //Genson genson = new GensonBuilder().withConverter(new DateSerializer(), java.util.Date.class).create();
+                        String json = new Genson().serialize(rdv);
                         Log.i("Exchange-JSON", "Send == " + json);
 
                         HttpURLConnection urlConnection = null;

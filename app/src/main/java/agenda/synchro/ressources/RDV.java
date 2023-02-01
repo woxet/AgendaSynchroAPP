@@ -1,18 +1,18 @@
-package agenda.synchro;
+package agenda.synchro.ressources;
 
 import androidx.annotation.NonNull;
-
 import com.owlike.genson.Genson;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Date;
 
 public class RDV {
     private int idRDV;
     private String name;
-    private String date;
-    private String time;
+    private String dateString;
+
+    private String timeString;
+    private Date date;
+    private Date time;
     private String location;
 
     public RDV() {
@@ -21,6 +21,13 @@ public class RDV {
         this.setDate("unknown");
         this.setTime("unknown");
         this.setLocation("unknown");
+    }
+
+    public RDV(String name, Date date, Date time, String location){
+        this.setName(name);
+        this.setDateDate(date);
+        this.setTimeTime(time);
+        this.setLocation(location);
     }
     public RDV(int idRDV, String name, String date, String time, String location){
         this.setIdRDV(idRDV);
@@ -37,9 +44,10 @@ public class RDV {
         this.setLocation(location);
     }
 
-    public RDV(int idRDV, String name){
+    public RDV(int idRDV, String name, String time){
         this.idRDV = idRDV;
         this.name = name;
+        this.timeString = time;
     }
 
     public int getIdRDV() {return idRDV;}
@@ -57,19 +65,35 @@ public class RDV {
     }
 
     public String getDate() {
-        return date;
+        return dateString;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getTime() {
+    public Date getTimeTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTimeTime(Date time){
         this.time = time;
+    }
+
+    public Date getDateDate() {
+        return date;
+    }
+
+    public void setDateDate(Date date){
+        this.date = date;
+    }
+
+    public void setDate(String date) {
+        this.dateString = date;
+    }
+
+    public String getTime() {
+        return timeString;
+    }
+
+    public void setTime(String time) {
+        this.timeString = timeString;
     }
 
     public String getLocation() {

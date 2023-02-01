@@ -1,26 +1,23 @@
-package agenda.synchro;
+package agenda.synchro.service;
 
+import agenda.synchro.R;
+import agenda.synchro.ressources.Ressources;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.ListView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import ressources.Ressources;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -33,20 +30,23 @@ import java.util.*;
 
 public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver broadcastReceiver;
-
-    String selectedDate = null;
+    private String selectedDate;
+    private CalendarView calendarView;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        CalendarView calendarView;
-        ListView listView;
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        selectedDate = dateFormat.format(c.getTime());
 
         // Initialisation des éléments graphiques
         calendarView = findViewById(R.id.calendarView);
         listView = findViewById(R.id.list_view);
+
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
@@ -81,11 +80,6 @@ public class MainActivity extends AppCompatActivity {
                 getDataFromServer(listView, selectedDate);
             }
         });
-        //Calendar c = Calendar.getInstance();
-        //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        //String date = dateFormat.format(c.getTime());
-        //getDataFromServer(listView,date);
-        Log.i("GENERATE START", "1");
     }
 
     public void getDataFromServer(ListView listView, String date) {
@@ -115,13 +109,14 @@ public class MainActivity extends AppCompatActivity {
                             try {
                                 // Traitement de la réponse
                                 JSONArray jsonArray = new JSONArray(jsonString);
-                                Map<Integer, String> rdvMap = new HashMap<>();
+                                    Map<Integer, String> rdvMap = new HashMap<>();
 
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     int idRDV = jsonObject.getInt("idRDV");
                                     String name = jsonObject.getString("name");
-                                    rdvMap.put(idRDV, name);
+                                    String time = jsonObject.getString("time");
+                                    rdvMap.put(idRDV, time + " - " + name);
                                 }
 
                                 ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, new ArrayList<>(rdvMap.values()));

@@ -18,7 +18,7 @@
         android:theme="@style/Theme.ASI"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".service.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,13 +31,13 @@
                 android:value="" />
         </activity>
 
-        <activity android:name=".AddActivity">
+        <activity android:name=".service.AddActivity">
         </activity>
 
-        <activity android:name=".DetailsActivity">
+        <activity android:name=".service.DetailsActivity">
         </activity>
 
-        <activity android:name=".UpdateActivity">
+        <activity android:name=".service.UpdateActivity">
         </activity>
 
     </application>
