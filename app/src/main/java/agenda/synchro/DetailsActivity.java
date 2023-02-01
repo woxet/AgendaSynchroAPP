@@ -39,13 +39,7 @@ public class DetailsActivity extends AppCompatActivity {
         dateTextView = findViewById(R.id.date_text_view);
         timeTextView = findViewById(R.id.time_text_view);
         locationTextView = findViewById(R.id.location_text_view);
-    /*
-        // Affichage des données de rendez-vous
-        nameTextView.setText(name);
-        dateTextView.setText("Monday, January 25th");
-        timeTextView.setText("2:00:00");
-        locationTextView.setText("UPJV");
-*/
+
         Button update = findViewById(R.id.update_button);
         update.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,7 +59,7 @@ public class DetailsActivity extends AppCompatActivity {
                     public void run() {
                         HttpURLConnection urlConnection = null;
                         try {
-                            URL url = new URL("http:///10.1.24.72:8080/ASI_war/rest/rdv/delete/" + idRDV);
+                            URL url = new URL(Ressources.getIP()+Ressources.getPath()+"/delete/" + idRDV);
                             urlConnection = (HttpURLConnection) url.openConnection();
                             urlConnection.setRequestMethod("GET");
                             Log.i("HTTP", "URL == " + url);
@@ -114,11 +108,14 @@ public class DetailsActivity extends AppCompatActivity {
 
                     InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                     Scanner scanner = new Scanner(in);
-                    Log.i("TEST","AVANT PARSE");
+                    Log.i("TEST","1");
 
-                    Genson genson = new GensonBuilder().withConverter(new DateSerializer(), java.util.Date.class).create();
-                    final RDV rdv = genson.deserialize(scanner.nextLine(), RDV.class);
+                    //Genson genson = new GensonBuilder().withConverter(new DateSerializer(), java.util.Date.class).create();
+                    Genson genson = new Genson();
+
+                    RDV rdv = genson.deserialize(scanner.nextLine(), RDV.class);
                     Log.i("Exchange-JSON", "Result == " + rdv);
+                    Log.i("TEST","2");
 
                     runOnUiThread(new Runnable() {
                         @Override

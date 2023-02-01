@@ -62,7 +62,7 @@
                     android:id="@+id/addRDV_name"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
-                    android:inputType="text" />
+                    android:inputType="text"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -75,8 +75,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="52dp"
                         android:inputType="date"
-                        android:digits="0123456789-/" />
-
+                        android:focusable="false"
+                        android:digits="0123456789-/"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -100,7 +100,8 @@
                     android:id="@+id/addRDV_time"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
-                    android:inputType="time" />
+                    android:inputType="time"
+                    android:focusable="false"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 

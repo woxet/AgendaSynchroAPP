@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,6 +33,9 @@ import java.util.*;
 
 public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver broadcastReceiver;
+
+    String selectedDate = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,13 +47,13 @@ public class MainActivity extends AppCompatActivity {
         // Initialisation des éléments graphiques
         calendarView = findViewById(R.id.calendarView);
         listView = findViewById(R.id.list_view);
-        broadcastReceiver = new BroadcastReceiver() {
+        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Calendar c = Calendar.getInstance();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 String date = dateFormat.format(c.getTime());
-                getDataFromServer(listView,date);
+                getDataFromServer(listView, date);
             }
         };
 
@@ -57,28 +61,34 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddActivity.class);
-                startActivity(intent);
+                Log.i("CHECK", selectedDate);
+                if (selectedDate != null) {
+                    Intent intent = new Intent(MainActivity.this, AddActivity.class);
+                    intent.putExtra("selected_date", selectedDate);
+                    startActivity(intent);
+                }
             }
         });
 
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String date = dateFormat.format(c.getTime());
-        getDataFromServer(listView,date);
+
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
                 // Récupération de la date sélectionnée
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                String date = dateFormat.format(new Date(year - 1900, month, dayOfMonth));
-                getDataFromServer(listView, date);
+                selectedDate = dateFormat.format(new Date(year - 1900, month, dayOfMonth));
+
+                getDataFromServer(listView, selectedDate);
             }
         });
+        //Calendar c = Calendar.getInstance();
+        //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        //String date = dateFormat.format(c.getTime());
+        //getDataFromServer(listView,date);
         Log.i("GENERATE START", "1");
     }
 
-    public void getDataFromServer(ListView listView, String date){
+    public void getDataFromServer(ListView listView, String date) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -88,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 //String date = dateFormat.format(c.getTime());
                 HttpURLConnection urlConnection = null;
                 try {
-                    URL url = new URL(Ressources.getIP() + Ressources.getPath() +"getdate/" + date);
+                    URL url = new URL(Ressources.getIP() + Ressources.getPath() + "getdate/" + date);
                     Log.i("URL", "URL == " + url);
 
                     urlConnection = (HttpURLConnection) url.openConnection();
@@ -137,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     });
-
                     in.close();
                 } catch (IOException e) {
                     Log.e("Exchange-JSON", "Cannot found HTTP server", e);

@@ -11,11 +11,18 @@ import java.util.Date;
 public class RDV {
     private int idRDV;
     private String name;
-    private Date date;
+    private String date;
     private String time;
     private String location;
 
-    public RDV(int idRDV, String name, Date date, String time, String location){
+    public RDV() {
+        this.setIdRDV(-1);
+        this.setName("unknown");
+        this.setDate("unknown");
+        this.setTime("unknown");
+        this.setLocation("unknown");
+    }
+    public RDV(int idRDV, String name, String date, String time, String location){
         this.setIdRDV(idRDV);
         this.setName(name);
         this.setDate(date);
@@ -23,7 +30,7 @@ public class RDV {
         this.setLocation(location);
     }
 
-    public RDV(String name, Date date, String time, String location){
+    public RDV(String name, String date, String time, String location){
         this.setName(name);
         this.setDate(date);
         this.setTime(time);
@@ -49,11 +56,11 @@ public class RDV {
         this.name = name;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

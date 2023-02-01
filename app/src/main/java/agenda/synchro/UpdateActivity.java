@@ -53,17 +53,13 @@ public class UpdateActivity extends AppCompatActivity {
                     public void run() {
                         RDV rdv = null;
 
-                        try {
-                            rdv = new RDV(
-                                    Objects.requireNonNull(idRDV),
-                                    Objects.requireNonNull(nameTextInput.getText()).toString(),
-                                    new SimpleDateFormat("yyyy-MM-dd").parse(Objects.requireNonNull(dateTextInput.getText()).toString()),
-                                    Objects.requireNonNull(timeTextInput.getText()).toString(),
-                                    Objects.requireNonNull(locationTextInput.getText()).toString()
-                            );
-                        } catch (ParseException e) {
-                            throw new RuntimeException(e);
-                        }
+                        rdv = new RDV(
+                                Objects.requireNonNull(idRDV),
+                                Objects.requireNonNull(nameTextInput.getText()).toString(),
+                                new SimpleDateFormat("yyyy-MM-dd").format(Objects.requireNonNull(dateTextInput.getText()).toString()),
+                                Objects.requireNonNull(timeTextInput.getText()).toString(),
+                                Objects.requireNonNull(locationTextInput.getText()).toString()
+                        );
                         String json = new Genson().serialize(rdv);
                         Log.i("Exchange-JSON", "Update == " + json);
 

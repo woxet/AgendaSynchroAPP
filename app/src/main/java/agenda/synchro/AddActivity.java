@@ -1,10 +1,14 @@
 package agenda.synchro;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TimePicker;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.owlike.genson.Genson;
@@ -43,10 +47,55 @@ public class AddActivity extends AppCompatActivity {
         locationTextInput = findViewById(R.id.addRDV_location);
 
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+       // SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
-        dateTextInput.setText(dateFormat.format(c.getTime()));
+        String selectedDate = getIntent().getStringExtra("selected_date");
+        //TextInputEditText dateInput = findViewById(R.id.addRDV_name);
+        dateTextInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar cal = Calendar.getInstance();
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dialog = new DatePickerDialog(
+                        AddActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                String date = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth);
+                                dateTextInput.setText(date);
+                            }
+                        },
+                        year,
+                        month,
+                        day
+                );
+                dialog.show();
+            }
+        });
+
+        dateTextInput.setText(selectedDate);
+
+        //TextInputEditText timeInput = findViewById(R.id.addRDV_time);
+        timeTextInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar calendar = Calendar.getInstance();
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(AddActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        String time = String.format("%02d:%02d", selectedHour, selectedMinute);
+                        timeTextInput.setText(time);
+                    }
+                }, hour, minute, true);
+                timePickerDialog.show();
+            }
+        });
         timeTextInput.setText(timeFormat.format(c.getTime()));
 
         Button send = findViewById(R.id.send_button);
@@ -68,16 +117,12 @@ public class AddActivity extends AppCompatActivity {
                         }
 
                         RDV rdv = null;
-                        try {
-                            rdv = new RDV(
-                                    Objects.requireNonNull(nameTextInput.getText()).toString(),
-                                    new SimpleDateFormat("yyyy-MM-dd").parse(Objects.requireNonNull(dateTextInput.getText()).toString()),
-                                    Objects.requireNonNull(timeTextInput.getText()).toString(),
-                                    Objects.requireNonNull(locationTextInput.getText()).toString()
-                            );
-                        } catch (ParseException e) {
-                            throw new RuntimeException(e);
-                        }
+                        rdv = new RDV(
+                                Objects.requireNonNull(nameTextInput.getText()).toString(),
+                                new SimpleDateFormat("yyyy-MM-dd").format(Objects.requireNonNull(dateTextInput.getText()).toString()),
+                                Objects.requireNonNull(timeTextInput.getText()).toString(),
+                                Objects.requireNonNull(locationTextInput.getText()).toString()
+                        );
 
                         Genson genson = new GensonBuilder().withConverter(new DateSerializer(), java.util.Date.class).create();
                         String json = genson.serialize(rdv);
