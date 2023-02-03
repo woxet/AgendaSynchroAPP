@@ -40,24 +40,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        selectedDate = dateFormat.format(c.getTime());
+        selectedDate = Ressources.dateFormat.format(c.getTime());
 
         // Initialisation des éléments graphiques
         calendarView = findViewById(R.id.calendarView);
         listView = findViewById(R.id.list_view);
-
-        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Calendar c = Calendar.getInstance();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                String date = dateFormat.format(c.getTime());
-                getDataFromServer(listView, date);
-            }
-        };
-
         FloatingActionButton fab = findViewById(R.id.fabAddRdv);
+
+        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+                // Récupération de la date sélectionnée
+                selectedDate = Ressources.dateFormat.format(new Date(year - 1900, month, dayOfMonth));
+
+                getDataFromServer(listView, selectedDate);
+            }
+        });
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,16 +69,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
-            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                // Récupération de la date sélectionnée
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                selectedDate = dateFormat.format(new Date(year - 1900, month, dayOfMonth));
-
-                getDataFromServer(listView, selectedDate);
+            public void onReceive(Context context, Intent intent) {
+                Calendar c = Calendar.getInstance();
+                String date = Ressources.dateFormat.format(c.getTime());
+                getDataFromServer(listView, date);
             }
-        });
+        };
     }
 
     public void getDataFromServer(ListView listView, String date) {
@@ -116,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                                     int idRDV = jsonObject.getInt("idRDV");
                                     String name = jsonObject.getString("name");
                                     String time = jsonObject.getString("time");
-                                    rdvMap.put(idRDV, time + " - " + name);
+                                    rdvMap.put(idRDV,time + " - " + name);
                                 }
 
                                 ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, new ArrayList<>(rdvMap.values()));

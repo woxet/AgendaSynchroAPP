@@ -121,7 +121,7 @@ public class DetailsActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             nameTextView.setText(rdv.getName());
-                            dateTextView.setText(rdv.getDate().toString());
+                            dateTextView.setText(rdv.getDate());
                             timeTextView.setText(rdv.getTime());
                             locationTextView.setText(rdv.getLocation());
                         }

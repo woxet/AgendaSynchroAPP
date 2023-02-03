@@ -109,7 +109,7 @@ public class AddActivity extends AppCompatActivity {
                         RDV rdv = null;
                         rdv = new RDV(
                                 Objects.requireNonNull(nameTextInput.getText()).toString(),
-                                Objects.requireNonNull(date),
+                                Objects.requireNonNull(dateTextInput.getText().toString()),
                                 Objects.requireNonNull(timeTextInput.getText()).toString(),
                                 Objects.requireNonNull(locationTextInput.getText()).toString()
                         );

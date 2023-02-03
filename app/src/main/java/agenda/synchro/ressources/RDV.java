@@ -4,15 +4,11 @@ import androidx.annotation.NonNull;
 import com.owlike.genson.Genson;
 
 import java.util.Date;
-
 public class RDV {
     private int idRDV;
     private String name;
-    private String dateString;
-
-    private String timeString;
-    private Date date;
-    private Date time;
+    private String date;
+    private String time;
     private String location;
 
     public RDV() {
@@ -23,12 +19,6 @@ public class RDV {
         this.setLocation("unknown");
     }
 
-    public RDV(String name, Date date, Date time, String location){
-        this.setName(name);
-        this.setDateDate(date);
-        this.setTimeTime(time);
-        this.setLocation(location);
-    }
     public RDV(int idRDV, String name, String date, String time, String location){
         this.setIdRDV(idRDV);
         this.setName(name);
@@ -47,7 +37,7 @@ public class RDV {
     public RDV(int idRDV, String name, String time){
         this.idRDV = idRDV;
         this.name = name;
-        this.timeString = time;
+        this.time = time;
     }
 
     public int getIdRDV() {return idRDV;}
@@ -65,35 +55,19 @@ public class RDV {
     }
 
     public String getDate() {
-        return dateString;
-    }
-
-    public Date getTimeTime() {
-        return time;
-    }
-
-    public void setTimeTime(Date time){
-        this.time = time;
-    }
-
-    public Date getDateDate() {
         return date;
     }
 
-    public void setDateDate(Date date){
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public void setDate(String date) {
-        this.dateString = date;
-    }
-
     public String getTime() {
-        return timeString;
+        return time;
     }
 
     public void setTime(String time) {
-        this.timeString = timeString;
+        this.time = time;
     }
 
     public String getLocation() {
