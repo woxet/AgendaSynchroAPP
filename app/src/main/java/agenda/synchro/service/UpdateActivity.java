@@ -16,10 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.owlike.genson.Genson;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -32,6 +29,7 @@ public class UpdateActivity extends AppCompatActivity {
     private TextInputEditText dateTextInput;
     private TextInputEditText timeTextInput;
     private TextInputEditText locationTextInput;
+    private Button send;
     private int idRDV;
 
     public void onCreate(Bundle savedInstanceState){
@@ -46,58 +44,7 @@ public class UpdateActivity extends AppCompatActivity {
         timeTextInput = findViewById(R.id.addRDV_time);
         locationTextInput = findViewById(R.id.addRDV_location);
 
-        Button send = findViewById(R.id.send_button);
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                new Thread(new Runnable() {
-                    public void run() {
-                        RDV rdv = null;
-
-                        rdv = new RDV(
-                                Objects.requireNonNull(idRDV),
-                                Objects.requireNonNull(nameTextInput.getText()).toString(),
-                                new SimpleDateFormat("yyyy-MM-dd").format(Objects.requireNonNull(dateTextInput.getText()).toString()),
-                                Objects.requireNonNull(timeTextInput.getText()).toString(),
-                                Objects.requireNonNull(locationTextInput.getText()).toString()
-                        );
-                        String json = new Genson().serialize(rdv);
-                        Log.i("Exchange-JSON", "Update == " + json);
-
-                        HttpURLConnection urlConnection = null;
-
-                        try {
-                            URL url = new URL(Ressources.getIP() + Ressources.getPath() + "update");
-
-                            urlConnection = (HttpURLConnection) url.openConnection();
-                            urlConnection.setRequestMethod("PUT");
-                            urlConnection.setDoOutput(true);
-                            urlConnection.setRequestProperty("Content-Type", "application/json");
-                            urlConnection.setRequestProperty("Accept", "application/json");
-
-                            OutputStream os = urlConnection.getOutputStream();
-                            os.write(json.getBytes());
-                            os.flush();
-                            os.close();
-                            Log.i("Exchange-JSON", "URL == " + url);
-
-                            // Traitement de la réponse
-                            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                            Scanner scanner = new Scanner(in);
-                            Log.i("Exchange JSON", "Result == " + scanner.nextLine());
-                            in.close();
-                        } catch (IOException e) {
-                            Log.i("Exchange-JSON", "Cannot found http server : ", e);
-                        } finally {
-                            if (urlConnection != null) urlConnection.disconnect();
-                        }
-                    }
-                }).start();
-
-                finish();
-            }
-        });
+        send = findViewById(R.id.send_button);
     }
 
     protected void onResume() {
@@ -166,6 +113,7 @@ public class UpdateActivity extends AppCompatActivity {
                             timeTextInput.setText(rdv.getTime());
                             locationTextInput.setText(rdv.getLocation());
                         }
+
                     });
                     in.close();
                 } catch (IOException e) {
@@ -173,6 +121,60 @@ public class UpdateActivity extends AppCompatActivity {
                 } finally {
                     if( urlConnection != null) urlConnection.disconnect();
                 }
+                send.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        new Thread(new Runnable() {
+                            public void run() {
+                                RDV rdv = null;
+                                Log.i("CHECK date", dateTextInput.getText().toString());
+
+                                rdv = new RDV(
+                                        Objects.requireNonNull(idRDV),
+                                        Objects.requireNonNull(nameTextInput.getText()).toString(),
+                                        Objects.requireNonNull(dateTextInput.getText()).toString(),
+                                        Objects.requireNonNull(timeTextInput.getText()).toString(),
+                                        Objects.requireNonNull(locationTextInput.getText()).toString()
+                                );
+                                String json = new Genson().serialize(rdv);
+                                Log.i("Exchange-JSON", "Update == " + json);
+
+                                HttpURLConnection urlConnection = null;
+
+                                try {
+                                    URL url = new URL(Ressources.getIP() + Ressources.getPath() + "update");
+
+                                    urlConnection = (HttpURLConnection) url.openConnection();
+                                    urlConnection.setRequestMethod("PUT");
+                                    urlConnection.setDoOutput(true);
+                                    urlConnection.setRequestProperty("Content-Type", "application/json");
+                                    //urlConnection.setRequestProperty("Accept", "application/json");
+
+                                    OutputStream os = new BufferedOutputStream(urlConnection.getOutputStream());
+                                    os.write(json.getBytes());
+                                    Log.i("Exchange-JSON", "JSON == " + json);
+                                    //os.flush();
+                                    os.close();
+                                    Log.i("Exchange-JSON", "URL == " + url);
+
+                                    // Traitement de la réponse
+                                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                                    Scanner scanner = new Scanner(in);
+                                    Log.i("Exchange JSON", "Result == " + scanner.nextLine());
+                                    in.close();
+                                } catch (IOException e) {
+                                    Log.i("Exchange-JSON", "Cannot found http server : ", e);
+                                } finally {
+                                    if (urlConnection != null) urlConnection.disconnect();
+                                }
+                            }
+                        }).start();
+
+                        finish();
+                    }
+                });
+
             }
         }).start();
     }

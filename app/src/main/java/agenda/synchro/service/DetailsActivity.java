@@ -108,14 +108,12 @@ public class DetailsActivity extends AppCompatActivity {
 
                     InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                     Scanner scanner = new Scanner(in);
-                    Log.i("TEST","1");
 
                     //Genson genson = new GensonBuilder().withConverter(new DateSerializer(), java.util.Date.class).create();
                     Genson genson = new Genson();
 
                     RDV rdv = genson.deserialize(scanner.nextLine(), RDV.class);
                     Log.i("Exchange-JSON", "Result == " + rdv);
-                    Log.i("TEST","2");
 
                     runOnUiThread(new Runnable() {
                         @Override
