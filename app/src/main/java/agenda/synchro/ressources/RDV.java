@@ -80,7 +80,11 @@ public class RDV {
 
     @NonNull
     @Override
-    public String toString() {
+    public String toString(){
+        return getTime() + " - " + getName();
+    }
+
+    public String toJSON(){
         Genson genson = new Genson();
         return genson.serialize(this);
     }

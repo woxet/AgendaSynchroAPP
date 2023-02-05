@@ -1,6 +1,7 @@
 package agenda.synchro.service;
 
 import agenda.synchro.R;
+import agenda.synchro.ressources.RDV;
 import agenda.synchro.ressources.Ressources;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -106,36 +107,31 @@ public class MainActivity extends AppCompatActivity {
                             try {
                                 // Traitement de la réponse
                                 JSONArray jsonArray = new JSONArray(jsonString);
-                                    Map<Integer, String> rdvMap = new HashMap<>();
+                                List<RDV> rdvList = new ArrayList<>();
 
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
                                     int idRDV = jsonObject.getInt("idRDV");
                                     String name = jsonObject.getString("name");
                                     String time = jsonObject.getString("time");
-                                    rdvMap.put(idRDV,time + " - " + name);
+                                    RDV rdv = new RDV(idRDV, name, time);
+                                    rdvList.add(rdv);
                                 }
 
-                                ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, new ArrayList<>(rdvMap.values()));
+                                ArrayAdapter<RDV> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, rdvList);
                                 listView.setAdapter(adapter);
                                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        String name = (String) parent.getItemAtPosition(position);
-                                        int idRDV = -1;
-                                        for (Map.Entry<Integer, String> entry : rdvMap.entrySet()) {
-                                            if (entry.getValue().equals(name)) {
-                                                idRDV = entry.getKey();
-                                                break;
-                                            }
-                                        }
+                                        RDV rdv = (RDV) parent.getItemAtPosition(position);
                                         Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
-                                        intent.putExtra("idRDV", idRDV);
+                                        intent.putExtra("idRDV", rdv.getIdRDV());
                                         startActivity(intent);
                                     }
                                 });
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+
+                            } catch (JSONException ex) {
+                                throw new RuntimeException(ex);
                             }
                         }
                     });
