@@ -59,7 +59,7 @@ public class DetailsActivity extends AppCompatActivity {
                     public void run() {
                         HttpURLConnection urlConnection = null;
                         try {
-                            URL url = new URL(Ressources.getIP()+Ressources.getPath()+"/delete/" + idRDV);
+                            URL url = new URL(Ressources.getIP()+Ressources.getPath()+"delete/" + idRDV);
                             urlConnection = (HttpURLConnection) url.openConnection();
                             urlConnection.setRequestMethod("GET");
                             Log.i("HTTP", "URL == " + url);
