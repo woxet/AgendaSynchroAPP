@@ -16,10 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.owlike.genson.Genson;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
@@ -94,44 +91,32 @@ public class AddActivity extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 new Thread(new Runnable() {
                     public void run() {
-                        String dateString = dateTextInput.getText().toString();
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                        Date date = new Date();
-                        try {
-                            date = format.parse(dateString);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        Log.i("CHECK",dateString);
-                        RDV rdv = null;
-                        rdv = new RDV(
+                        RDV rdv = new RDV(
                                 Objects.requireNonNull(nameTextInput.getText()).toString(),
-                                Objects.requireNonNull(dateTextInput.getText().toString()),
+                                Objects.requireNonNull(dateTextInput.getText()).toString(),
                                 Objects.requireNonNull(timeTextInput.getText()).toString(),
                                 Objects.requireNonNull(locationTextInput.getText()).toString()
                         );
-
-                        //Genson genson = new GensonBuilder().withConverter(new DateSerializer(), java.util.Date.class).create();
                         String json = new Genson().serialize(rdv);
-                        Log.i("Exchange-JSON", "Send == " + json);
+                        Log.i("Exchange-JSON", "Update == " + json);
 
                         HttpURLConnection urlConnection = null;
 
                         try {
-                            URL url = new URL(Ressources.getIP() + Ressources.getPath() + "add/");
+                            URL url = new URL(Ressources.getIP() + Ressources.getPath() + "add");
 
                             urlConnection = (HttpURLConnection) url.openConnection();
                             urlConnection.setRequestMethod("POST");
                             urlConnection.setDoOutput(true);
-                            urlConnection.setRequestProperty("Content-Type", "application/json");
-                            urlConnection.setRequestProperty("Accept", "application/json");
+                            urlConnection.setRequestProperty("Content-Type", "text/plain");
+                            //urlConnection.setRequestProperty("Accept", "text/plain");
 
-                            OutputStream os = urlConnection.getOutputStream();
+                            OutputStream os = new BufferedOutputStream(urlConnection.getOutputStream());
                             os.write(json.getBytes());
-                            os.flush();
+                            Log.i("Exchange-JSON", "JSON == " + json);
+                            //os.flush();
                             os.close();
                             Log.i("Exchange-JSON", "URL == " + url);
 

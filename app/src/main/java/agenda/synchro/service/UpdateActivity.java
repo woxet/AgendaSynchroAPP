@@ -124,13 +124,9 @@ public class UpdateActivity extends AppCompatActivity {
                 send.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
                         new Thread(new Runnable() {
                             public void run() {
-                                RDV rdv = null;
-                                Log.i("CHECK date", dateTextInput.getText().toString());
-
-                                rdv = new RDV(
+                                RDV rdv = new RDV(
                                         Objects.requireNonNull(idRDV),
                                         Objects.requireNonNull(nameTextInput.getText()).toString(),
                                         Objects.requireNonNull(dateTextInput.getText()).toString(),
@@ -148,8 +144,8 @@ public class UpdateActivity extends AppCompatActivity {
                                     urlConnection = (HttpURLConnection) url.openConnection();
                                     urlConnection.setRequestMethod("PUT");
                                     urlConnection.setDoOutput(true);
-                                    urlConnection.setRequestProperty("Content-Type", "application/json");
-                                    //urlConnection.setRequestProperty("Accept", "application/json");
+                                    urlConnection.setRequestProperty("Content-Type", "text/plain");
+                                    //urlConnection.setRequestProperty("Accept", "text/plain");
 
                                     OutputStream os = new BufferedOutputStream(urlConnection.getOutputStream());
                                     os.write(json.getBytes());

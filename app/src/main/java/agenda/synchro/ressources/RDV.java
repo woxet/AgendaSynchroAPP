@@ -14,8 +14,8 @@ public class RDV {
     public RDV() {
         this.setIdRDV(-1);
         this.setName("unknown");
-        this.setDate("unknown");
-        this.setTime("unknown");
+        this.setDate(null);
+        this.setTime(null);
         this.setLocation("unknown");
     }
 
@@ -28,6 +28,7 @@ public class RDV {
     }
 
     public RDV(String name, String date, String time, String location){
+        this.setIdRDV(-1);
         this.setName(name);
         this.setDate(date);
         this.setTime(time);

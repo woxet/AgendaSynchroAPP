@@ -9,7 +9,7 @@ public class Ressources {
 
     private static String ip = "http://192.168.1.10:8080/";
     //private static String ip = "http://10.1.24.72:8080/";
-    private static String path = "ASI_war/rdv/";
+    private static String path = "ASI/rdv/";
 
     public static String getIP(){
         return ip;
